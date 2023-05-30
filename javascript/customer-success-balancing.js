@@ -16,9 +16,9 @@ function customerSuccessBalancing(
   const availableCSs = css.filter(cs => !csAway.includes(cs.id));
 
   const csCount = availableCSs.length;
-  const csScores = availableCSs.map(cs => cs.score).sort((a, b) => b - a);
+  const csScores = availableCSs.sort((a, b) => a.score - b.score);
   const customerCount = customers.length;
-  const customerScores = customers.map(customer => customer.score).sort((a, b) => b - a);
+  const customerScores = customers.sort((a, b) => a.score - b.score);
 
   //variáveis utilizadas para controlar o index atual
   let csIndex = 0;
@@ -27,7 +27,7 @@ function customerSuccessBalancing(
 
   //Implementar lógica para distribuir clientes com base no score.
   while (csIndex < csCount && customerIndex < customerCount) {
-    if (customerScores[customerIndex] <= csScores[csIndex]) {
+    if (customerScores[customerIndex].score <= csScores[csIndex].score) {
       customerCountByCS[csIndex]++;
       customerIndex++;
     } else {
@@ -44,8 +44,7 @@ function customerSuccessBalancing(
 
   const maxCustomerIndex = customerCountByCS.findIndex(count => count === maxCustomerCount);
 
-  
-  return availableCSs[maxCustomerIndex].id;
+  return csScores[maxCustomerIndex].id;
 
 }
 
@@ -97,7 +96,6 @@ test("Should return a tie when there is more than one CS with the same number of
   expect(customerSuccessBalancing(css, customers, csAway)).toEqual(0);
 });
 
-//test failing
 test("Should return the id of the cs with more customers", () => {
   const testTimeoutInMs = 100;
   const testStartTime = new Date().getTime();
@@ -137,7 +135,6 @@ test("Should return tie when no available cs is able to service clients", () => 
   expect(customerSuccessBalancing(css, customers, csAway)).toEqual(0);
 });
 
-//test failing
 test("Should correctly return the id of the cs that serves all customers when the other cs have higher levels", () => {
   const css = mapEntities([100, 99, 88, 3, 4, 5]);
   const customers = mapEntities([10, 10, 10, 20, 20, 30, 30, 30, 20, 60]);
